@@ -28,15 +28,16 @@ function getQuizId(){
 
 function getQuizConetent(quizId){
     //make an ajax call with the q= param.  Returns question text + answer options
-    //call displayQuiz()
+    //call displayQuiz() with returned params
 }
 
 function displayQuiz(qText, ansA, ansB, andC, ansD){
-
+    //Display the question text and answers to the html elements
+    //no ajax required
 }
 
 function verifyQuiz(){
-
+    //make ajax request with q and a para to get a boolean value to verify the answer
 }
 
 function updateSideBar(){
