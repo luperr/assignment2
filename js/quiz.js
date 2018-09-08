@@ -17,7 +17,7 @@ function getQuizId(){
         dataType: "json",
         success: function(data){
             console.log(data.q)
-           
+            getQuizConetent(data.q);           
         },
         error: function(data){
             alert(data.error);
@@ -30,23 +30,41 @@ function getQuizConetent(quizId){
     //call displayQuiz() with returned params
     $.ajax({
         method: "POST",
-        url: "",
+        url: "http://turing.une.edu.au/~jbisho23/assignment2/quiz.php",
         dataType: "json",
         data: {q: quizId},
-        success: function(question){
-            console.log(question.text)
-            document.getElementById("quiz").classList.remove("hidden");
+        success: function(data){
+            console.log(data.text);
+            displayQuiz(data.text, data.choices.A, data.choices.B, data.choices.C, data.choices.D);
         }
     })
 }
 
-function displayQuiz(qText, ansA, ansB, andC, ansD){
+function displayQuiz(qText, ansA, ansB, ansC, ansD){
     //Display the question text and answers to the html elements
-    //no ajax required
+    document.getElementById("quiz_question").textContent=qText;
+    document.getElementById("answer_a").textContent=ansA;
+    document.getElementById("answer_b").textContent=ansB;
+    document.getElementById("answer_c").textContent=ansC;
+    document.getElementById("answer_d").textContent=ansD;
+    document.getElementById("quiz").classList.remove("hidden");
 }
 
-function verifyQuiz(){
+function verifyQuiz(qId, answer){
     //make ajax request with q and a para to get a boolean value to verify the answer
+    $.ajax({
+        method: "POST",
+        url: "http://turing.une.edu.au/~jbisho23/assignment2/quiz.php",
+        dataType: "json",
+        data: {q: qId, a: answer},
+        success: function(data){
+            console.log(data.q)
+            getQuizConetent(data.q);           
+        },
+        error: function(data){
+            alert(data.error);
+        },
+    });
 }
 
 function updateSideBar(){
