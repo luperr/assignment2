@@ -66,8 +66,6 @@ function validate(e){
 		},
 	});	
 	document.getElementById("registration").style.visibility = "hidden";
-	document.getElementById("quiz").style.visibility = "visible";
-
 }
 	return success;
 }
