@@ -1,5 +1,5 @@
 //global varibles
-var quizIdArray;
+var quizIdArray = [];
 var qTotal = 0;
 var qCorrect = 0;
 var qIncoorect = 0;
@@ -16,8 +16,10 @@ function getQuizId(){
         url: "http://turing.une.edu.au/~jbisho23/assignment2/quiz.php",
         dataType: "json",
         success: function(data){
-            console.log(data.q)
-            getQuizConetent(data.q);           
+            data.questions.forEach(function(e) {        
+                quizIdArray.push(e);        
+            });
+            getQuizConetent(data.questions[0]);           
         },
         error: function(data){
             alert(data.error);
@@ -34,7 +36,10 @@ function getQuizConetent(quizId){
         dataType: "json",
         data: {q: quizId},
         success: function(data){
-            console.log(data.text);
+            console.log(data.choices.A)
+            console.log(data.choices.B)
+            console.log(data.choices.C)
+            console.log(data.choices.D)
             displayQuiz(data.text, data.choices.A, data.choices.B, data.choices.C, data.choices.D);
         }
     })
@@ -42,9 +47,10 @@ function getQuizConetent(quizId){
 
 function displayQuiz(qText, ansA, ansB, ansC, ansD){
     //Display the question text and answers to the html elements
+    console.log(ansA)
     document.getElementById("quiz_question").textContent=qText;
-    document.getElementById("answer_a").textContent=ansA;
-    document.getElementById("answer_b").textContent=ansB;
+    document.getElementsByName("answer_a").innerHTML=ansA;
+    document.getElementsByName("answer_b").textContent=ansB;
     document.getElementById("answer_c").textContent=ansC;
     document.getElementById("answer_d").textContent=ansD;
     document.getElementById("quiz").classList.remove("hidden");
