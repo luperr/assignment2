@@ -3,7 +3,7 @@ var quizIdArray = [];
 var qTotal = 0;
 var qCorrect = 0;
 var qIncorrect = 0;
-var currentQuizId = quizIdArray[0];
+var currentQuizId = 0;
 
 $(function(){
     getQuizId();
@@ -11,58 +11,53 @@ $(function(){
 window.addEventListener("load", function(e){
 	document.getElementById("quiz").addEventListener("submit", validateQuiz);
 });
-
-
+//Request quiz ID's and append them to an array.
 function getQuizId(){
-    //make an ajax call with no params to get a list of quiz ID's
-    //store those IDs in a variable
     $.ajax({
         method: "GET",
         url: "http://turing.une.edu.au/~jbisho23/assignment2/quiz.php",
         dataType: "json",
         success: function(data){
-            data.questions.forEach(function(e) {        
-                quizIdArray.push(e);        
-            });
-            getQuizConetent(data.questions[0]);           
+            if(quizIdArray.length === 0){
+                data.questions.forEach(function(e) {        
+                    quizIdArray.push(e);        
+                });
+            }
+            if(qTotal < quizIdArray.length){
+            currentQuizId = quizIdArray[qTotal];  
+            getQuizConetent(data.questions[qTotal]);
+            }    
         },
         error: function(data){
             alert(data.error);
         },
     });
 }
-
+//using q param from getQuizId() get the quiz body
 function getQuizConetent(quizId){
-    //make an ajax call with the q= param.  Returns question text + answer options
-    //call displayQuiz() with returned params
     $.ajax({
         method: "POST",
         url: "http://turing.une.edu.au/~jbisho23/assignment2/quiz.php",
         dataType: "json",
-        data: {q: quizId},
+        data: {q: currentQuizId},
         success: function(data){
             displayQuiz(data.text, data.choices.A, data.choices.B, data.choices.C, data.choices.D);
         }
     })
 }
-
+//Use returned data from getquizContent() and display them
 function displayQuiz(qText, ansA, ansB, ansC, ansD){
-    //Display the question text and answers to the html elements
-    console.log(ansA)
     document.getElementById("quiz_question").textContent=qText;
     $("label[for='answer_a']").text(ansA);
     $("label[for='answer_b']").text(ansB);
     $("label[for='answer_c']").text(ansC);
     $("label[for='answer_d']").text(ansD);
-    document.getElementById("quiz").classList.remove("hidden");
 }
-
+//validate the input and adjust vars before sending request to the sever
 function validateQuiz(e){
     e.preventDefault();
     var answer = $('input[name=answer]:checked').val();
-    console.log(answer)
     var success = true;
-    //make ajax request with q and a para to get a boolean value to verify the answer
     $.ajax({
         method: "POST",
         url: "http://turing.une.edu.au/~jbisho23/assignment2/quiz.php",
@@ -76,7 +71,7 @@ function validateQuiz(e){
                 qIncorrect += 1;
             }
             updateSideBar();
-            
+            getQuizId();
             return success;
         },
         error: function(data){
@@ -84,9 +79,8 @@ function validateQuiz(e){
         },
     });
 }
-
+//Displays stats in the side bar
 function updateSideBar(){
-    //updates the side bar.  so we need a talley
     document.getElementById("score").classList.remove("hidden");
     document.getElementById("attempted").innerHTML="Attempted: " + qTotal;
     document.getElementById("correct").innerHTML="Correct: " + qCorrect;
